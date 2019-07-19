@@ -107,50 +107,12 @@ def pub_mqtt(jsonrow):
     with subprocess.Popen(cmd, shell=False, bufsize=0, stdin=subprocess.PIPE).stdin as f:
         json.dump(jsonrow, f)
 
+def test() :
+
+
 def get_values() :
     value = cmd_query_data()
     if value and len(value) :
         return value
     else :
         return -1
-
-if __name__ == "__main__":
-    cmd_set_sleep(0)
-    cmd_firmware_ver()
-    cmd_set_working_period(PERIOD_CONTINUOUS)
-    cmd_set_mode(MODE_QUERY);
-    while True:
-        cmd_set_sleep(0)
-        while True:
-            values = cmd_query_data();
-            if values is not None and len(values) == 2:
-              print("PM2.5: ", values[0], ", PM10: ", values[1])
-              time.sleep(5)
-        
-        '''
-        # open stored data
-        try:
-            with open(JSON_FILE) as json_data:
-                data = json.load(json_data)
-        except IOError as e:
-            data = []
-
-        # check if length is more than 100 and delete first element
-        if len(data) > 100:
-            data.pop(0)
-
-        # append new values
-        jsonrow = {'pm25': values[0], 'pm10': values[1], 'time': time.strftime("%d.%m.%Y %H:%M:%S")}
-        data.append(jsonrow)
-
-        # save it
-        with open(JSON_FILE, 'w') as outfile:
-            json.dump(data, outfile)
-
-        if MQTT_HOST != '':
-            pub_mqtt(jsonrow)
-            
-        print("Going to sleep for 1 min...")
-        cmd_set_sleep(1)
-        time.sleep(60)
-        '''
