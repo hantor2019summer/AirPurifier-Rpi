@@ -21,7 +21,7 @@ while True :
     lcd.clear()
 
     value_string = get_values()
-    lcd.messgae("UltraFine Duse : "+str(value_string[0])+"\nFine Dust : "+str(value_string[1]))
+    lcd.message("UltraFine Dust : "+str(value_string[0])+"\nFine Dust : "+str(value_string[1]))
 
     time.sleep(5.0)
 
