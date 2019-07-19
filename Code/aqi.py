@@ -107,9 +107,6 @@ def pub_mqtt(jsonrow):
     with subprocess.Popen(cmd, shell=False, bufsize=0, stdin=subprocess.PIPE).stdin as f:
         json.dump(jsonrow, f)
 
-def test() :
-
-
 def get_values() :
     value = cmd_query_data()
     if value and len(value) :
