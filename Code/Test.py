@@ -1,5 +1,8 @@
-import time
 import Adafruit_CharLCD as LCD
+import RPi.GPIO as GPIO
+import requests, json
+import time
+
 from aqi import get_values
 
 # Raspberry Pi pin setup
@@ -17,24 +20,34 @@ lcd_rows = 2
 
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
+# Raspberry Relay Control
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(20,GPIO.OUT)
+
+# Request Server
+URL = 'http://bigpie1367.pythonanywhere.com/api/dusts/'
+
 while True : 
     lcd.clear()
 
-    value_string = get_values()
-    lcd.message("UltraFine Dust : "+str(value_string[0])+"\nFine Dust : "+str(value_string[1]))
+    #Get Value
+    cur_density = get_values()
+    total_message = "UDust : "+str(cur_density[0])+"\nFDust : "+str(cur_density[1])
 
-    time.sleep(5.0)
+    # Control Relay
+    if cur_density[0] >= 12 or cur_density[1] >= 15 :
+        GPIO.output(20, True)
+        print("Current Status : ON")
+    else : 
+        GPIO.output(20, False)
+        print("Current Status : OFF")
 
-'''
-text = raw_input("Type Something to be displayed: ")
+    #Post Data to Server
+    data = {'density' : cur_density[0]}
+    res = requests.post(URL, data = data)
 
-lcd.message(text)
-time.sleep(5.0)
+    #Print LCD 
+    print(total_message)
+    lcd.message(total_message)
 
-lcd.clear()
-
-lcd.message('Goodbye\nWorld!')
-time.sleep(5.0)
-
-lcd.clear()
-'''
+    time.sleep(5.0) 
