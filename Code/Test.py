@@ -44,7 +44,7 @@ while True :
 
     #Post Data to Server
     data = {'density' : cur_density[0]}
-    res = requests.post(URL, data = json.dumps(data))
+    res = requests.post(URL, data = data)
 
     #Print LCD 
     print(total_message)
