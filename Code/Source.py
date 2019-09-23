@@ -48,7 +48,7 @@ while True :
     else : 
         GPIO.output(20, False)
         print("Current Status : OFF")
-    
+
     #Post Data to Server
     density_data = {'ultra_fine_density' : cur_density[0], 'fine_density' : cur_density[1]}
     requests.post(URL+'dusts/', data = density_data)
