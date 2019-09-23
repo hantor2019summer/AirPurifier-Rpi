@@ -25,29 +25,32 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(20,GPIO.OUT)
 
 # Request Server
-URL = 'http://bigpie1367.pythonanywhere.com/api/dusts/'
+URL = 'http://bigpie1367.pythonanywhere.com/api/'
 
-while True : 
+while True :
     lcd.clear()
 
     #Get Value
     cur_density = get_values()
-    total_message = "UDust : "+str(cur_density[0])+"\nFDust : "+str(cur_density[1])
+    total_message = "PM-2.5 : "+str(cur_density[0])+"\nPM-10 : "+str(cur_density[1])    
 
-    # Control Relay
-    if cur_density[0] >= 12 or cur_density[1] >= 15 :
+    #LCD Print
+    print(total_message)
+    lcd.message(total_message)
+
+    state_res = requests.get(URL+'switch/')
+    state_res = json.loads(state_res.content.decode())[0]['state']
+    
+    #Control Relay
+    if state_res == True and (cur_density[0] >= 5 or cur_density[1] >= 10) :
         GPIO.output(20, True)
         print("Current Status : ON")
     else : 
         GPIO.output(20, False)
         print("Current Status : OFF")
-
+    
     #Post Data to Server
-    data = {'density' : cur_density[0]}
-    res = requests.post(URL, data = data)
+    density_data = {'ultra_fine_density' : cur_density[0], 'fine_density' : cur_density[1]}
+    requests.post(URL+'dusts/', data = density_data)
 
-    #Print LCD 
-    print(total_message)
-    lcd.message(total_message)
-
-    time.sleep(5.0) 
+    time.sleep(10.0) 
